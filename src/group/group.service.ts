@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -26,6 +30,14 @@ export class GroupService {
       throw new NotFoundException('Staff does not exist');
     }
 
+    const branch = await this.prismaService.branch.findUnique({
+      where: { id: createGroupDto.branchId },
+    });
+
+    if (!branch) {
+      throw new NotFoundException('Branch does not exist');
+    }
+
     const newGroup = await this.prismaService.group.create({
       data: {
         name: createGroupDto.name,
@@ -35,9 +47,9 @@ export class GroupService {
         group_stage_id: createGroupDto.group_stage_id,
         room_number: createGroupDto.room_number,
         room_floor: createGroupDto.room_floor,
-        // branchId: createGroupDto.branch_id,
         lessons_quant: createGroupDto.lessons_quant,
         is_active: createGroupDto.is_active,
+        branchId: createGroupDto.branchId,
         staffs: {
           create: [{ staffId: staff.id }],
         },
@@ -50,7 +62,7 @@ export class GroupService {
   findAll() {
     return this.prismaService.group.findMany({
       include: {
-        staffs: { include: { staff: true }},
+        staffs: { include: { staff: true } },
       },
     });
   }

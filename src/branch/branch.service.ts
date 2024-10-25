@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBranchDto } from './dto/create-branch.dto';
 import { UpdateBranchDto } from './dto/update-branch.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -8,6 +8,15 @@ export class BranchService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(createBranchDto: CreateBranchDto) {
+    const candidate = await this.prismaService.branch.findUnique({
+      where: {
+        name: createBranchDto.name,
+      },
+    });
+
+    if (candidate) {
+      throw new BadRequestException('Branch already exists');
+    }
     const branch = await this.prismaService.branch.create({
       data: {
         name: createBranchDto.name,

@@ -40,7 +40,7 @@ export class CreateGroupDto {
 
   @IsOptional()
   @IsNumber()
-  readonly branch_id?: number;
+  readonly branchId?: number;
 
   @IsOptional()
   @IsNumber()
