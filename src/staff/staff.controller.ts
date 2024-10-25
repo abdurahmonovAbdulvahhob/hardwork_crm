@@ -25,7 +25,7 @@ export class StaffController {
     return this.staffService.findAll();
   }
 
-  @Get('get:id')
+  @Get('get/:id')
   findOne(@Param('id') id: string) {
     return this.staffService.findOne(+id);
   }

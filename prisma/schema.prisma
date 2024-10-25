@@ -36,26 +36,56 @@ model Role {
 }
 
 model Branch {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   name       String
   address    String
   callNumber String
+  // groups     Group[]
 
   @@map("branch")
 }
 
 model Staff {
-  id                 Int         @id @default(autoincrement())
+  id                 Int          @id @default(autoincrement())
   first_name         String?
   last_name          String?
   phone_number       String?
-  login              String      @unique
+  login              String       @unique
   hashedPassword     String
   hashedRefreshToken String?
   is_active          String?
   roles              StaffRole[]
+  groups             GroupStaff[]
 
   @@map("staff")
+}
+
+model Group {
+  id                Int          @id @default(autoincrement())
+  name              String @unique
+  lesson_start_time String?
+  lesson_continuous String?
+  lesson_week_day   String[]
+  group_stage_id    Int?
+  room_number       String?
+  room_floor        Int?
+  // branch            Branch       @relation(fields: [branchId], references: [id])
+  // branchId          Int
+  lessons_quant     Int?
+  is_active         Boolean?
+  staffs            GroupStaff[]
+
+  @@map("group")
+}
+
+model GroupStaff {
+  staff   Staff @relation(fields: [staffId], references: [id])
+  staffId Int
+  group   Group @relation(fields: [groupId], references: [id])
+  groupId Int
+
+  @@id([groupId, staffId])
+  @@map("group_staff")
 }
 
 model StaffRole {

@@ -7,9 +7,10 @@ import {
   AccessTokenStrategy,
   RefreshTokenCookieStrategy,
 } from '../common/strategies';
+import { StaffModule } from '../staff/staff.module';
 
 @Module({
-  imports: [JwtModule.register({}), PrismaModule],
+  imports: [JwtModule.register({}), PrismaModule,StaffModule],
   controllers: [AuthController],
   providers: [AuthService, AccessTokenStrategy, RefreshTokenCookieStrategy],
 })

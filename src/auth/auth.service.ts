@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -10,12 +11,15 @@ import { Staff } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateAuthStaffDto, SignInStaffDto } from './dto';
 import { Response } from 'express';
+import { StaffService } from '../staff/staff.service';
+import { CreateStaffDto } from '../staff/dto/create-stuff.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prismaService: PrismaService,
+    private readonly staffService: StaffService
   ) {}
 
   async generateTokens(staff: Staff): Promise<Tokens> {
@@ -49,31 +53,12 @@ export class AuthService {
     });
   }
 
-  async signup(createAuthStaffDto: CreateAuthStaffDto, res: Response) {
-    const candidate = await this.prismaService.staff.findUnique({
-      where: {
-        login: createAuthStaffDto.login,
-      },
-    });
-
-    if (candidate) {
-      throw new BadRequestException('Email already exists');
+  async signup(createStaffDto: CreateStaffDto, res: Response) {
+   
+    const newStaff = await this.staffService.create(createStaffDto)
+    if (!newStaff) {
+      throw new InternalServerErrorException('Yangi staff yaratishda xatolik');
     }
-
-    if (createAuthStaffDto.password !== createAuthStaffDto.confirm_password) {
-      throw new BadRequestException('Password does not match');
-    }
-    const hashedPassword = await bcrypt.hash(createAuthStaffDto.password, 10);
-
-    const newStaff = await this.prismaService.staff.create({
-      data: {
-        first_name: createAuthStaffDto.first_name,
-        last_name: createAuthStaffDto.last_name,
-        login: createAuthStaffDto.login,
-        phone_number: createAuthStaffDto.phone_number,
-        hashedPassword,
-      },
-    });
 
     const tokens = await this.generateTokens(newStaff);
     await this.updateRefreshToken(newStaff.id, tokens.refresh_token);

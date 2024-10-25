@@ -14,6 +14,7 @@ import { AccessTokenGuard, RefreshTokenGuard } from '../common/guards';
 import { CookieGetter, Public } from '../common/decorators';
 import { CreateAuthStaffDto, SignInStaffDto } from './dto';
 import { Response } from 'express';
+import { CreateStaffDto } from '../staff/dto/create-stuff.dto';
 
 @UseGuards(AccessTokenGuard)
 @Controller('auth')
@@ -23,10 +24,10 @@ export class AuthController {
   @Public()
   @Post('signup')
   async signup(
-    @Body() createAuthStaffDto: CreateAuthStaffDto,
+    @Body() createStaffDto: CreateStaffDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    return this.authService.signup(createAuthStaffDto, res);
+    return this.authService.signup(createStaffDto, res);
   }
 
   @Public()

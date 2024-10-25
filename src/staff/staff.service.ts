@@ -43,8 +43,8 @@ export class StaffService {
         login: createStaffDto.login,
         hashedPassword,
         roles: {
-          create: [{roleId: role.id}]
-        }
+          create: [{ roleId: role.id }],
+        },
       },
     });
 
@@ -52,7 +52,11 @@ export class StaffService {
   }
 
   findAll() {
-    return `This action returns all staff`;
+    return this.prismaService.staff.findMany({
+      include: {
+        roles: { include: { role: true } },
+      },
+    });
   }
 
   findOne(id: number) {
