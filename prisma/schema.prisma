@@ -28,8 +28,9 @@ model ReasonLid {
 }
 
 model Role {
-  id       Int    @id @default(autoincrement())
-  roleName String
+  id       Int         @id @default(autoincrement())
+  name String
+  staffs   StaffRole[]
 
   @@map("role")
 }
@@ -44,14 +45,25 @@ model Branch {
 }
 
 model Staff {
-  id                 Int     @id @default(autoincrement())
+  id                 Int         @id @default(autoincrement())
   first_name         String?
   last_name          String?
   phone_number       String?
-  login              String  @unique
+  login              String      @unique
   hashedPassword     String
   hashedRefreshToken String?
   is_active          String?
+  roles              StaffRole[]
 
   @@map("staff")
+}
+
+model StaffRole {
+  staff   Staff @relation(fields: [staffId], references: [id])
+  staffId Int
+  role    Role  @relation(fields: [roleId], references: [id])
+  roleId  Int
+
+  @@id([staffId, roleId])
+  @@map("staff_role")
 }

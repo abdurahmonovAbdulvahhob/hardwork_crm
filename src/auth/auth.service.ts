@@ -8,7 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtPayload, Tokens } from '../common/types';
 import { Staff } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { CreateStaffDto, SignInStaffDto } from './dto';
+import { CreateAuthStaffDto, SignInStaffDto } from './dto';
 import { Response } from 'express';
 
 @Injectable()
@@ -49,10 +49,10 @@ export class AuthService {
     });
   }
 
-  async signup(createStaffDto: CreateStaffDto, res: Response) {
+  async signup(createAuthStaffDto: CreateAuthStaffDto, res: Response) {
     const candidate = await this.prismaService.staff.findUnique({
       where: {
-        login: createStaffDto.login,
+        login: createAuthStaffDto.login,
       },
     });
 
@@ -60,17 +60,17 @@ export class AuthService {
       throw new BadRequestException('Email already exists');
     }
 
-    if (createStaffDto.password !== createStaffDto.confirm_password) {
+    if (createAuthStaffDto.password !== createAuthStaffDto.confirm_password) {
       throw new BadRequestException('Password does not match');
     }
-    const hashedPassword = await bcrypt.hash(createStaffDto.password, 10);
+    const hashedPassword = await bcrypt.hash(createAuthStaffDto.password, 10);
 
     const newStaff = await this.prismaService.staff.create({
       data: {
-        first_name: createStaffDto.first_name,
-        last_name: createStaffDto.last_name,
-        login: createStaffDto.login,
-        phone_number: createStaffDto.phone_number,
+        first_name: createAuthStaffDto.first_name,
+        last_name: createAuthStaffDto.last_name,
+        login: createAuthStaffDto.login,
+        phone_number: createAuthStaffDto.phone_number,
         hashedPassword,
       },
     });

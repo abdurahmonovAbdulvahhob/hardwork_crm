@@ -12,7 +12,7 @@ import {
 import { AuthService } from './auth.service';
 import { AccessTokenGuard, RefreshTokenGuard } from '../common/guards';
 import { CookieGetter, Public } from '../common/decorators';
-import { CreateStaffDto, SignInStaffDto } from './dto';
+import { CreateAuthStaffDto, SignInStaffDto } from './dto';
 import { Response } from 'express';
 
 @UseGuards(AccessTokenGuard)
@@ -23,10 +23,10 @@ export class AuthController {
   @Public()
   @Post('signup')
   async signup(
-    @Body() createStaffDto: CreateStaffDto,
+    @Body() createAuthStaffDto: CreateAuthStaffDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    return this.authService.signup(createStaffDto, res);
+    return this.authService.signup(createAuthStaffDto, res);
   }
 
   @Public()

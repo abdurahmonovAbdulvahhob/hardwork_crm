@@ -10,14 +10,14 @@ export class RoleService {
   async create(createRoleDto: CreateRoleDto) {
     const role = await this.prismaService.role.create({
       data: {
-        roleName: createRoleDto.roleName,
+        name: createRoleDto.name,
       },
     });
     return role;
   }
 
   async findAll() {
-    const roles = await this.prismaService.role.findMany();
+    const roles = await this.prismaService.role.findMany({include: {staffs: {include: {staff: true}}}});
     return roles;
   }
 
@@ -35,7 +35,7 @@ export class RoleService {
     const updatedRole = await this.prismaService.role.update({
       where: { id },
       data: {
-        roleName: updateRoleDto.roleName,
+        name: updateRoleDto.name,
       },
     });
     return updatedRole;
