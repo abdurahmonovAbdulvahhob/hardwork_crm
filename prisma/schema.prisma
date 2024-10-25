@@ -28,9 +28,9 @@ model ReasonLid {
 }
 
 model Role {
-  id       Int         @id @default(autoincrement())
-  name String
-  staffs   StaffRole[]
+  id     Int         @id @default(autoincrement())
+  name   String      @unique
+  staffs StaffRole[]
 
   @@map("role")
 }

@@ -8,34 +8,34 @@ import {
   Delete,
 } from '@nestjs/common';
 import { StaffService } from './staff.service';
-import { CreateAuthStaffDto } from './dto/create-staff.dto';
-import { UpdateStaffDto } from './dto/update-staff.dto';
+import { CreateStaffDto } from './dto/create-stuff.dto';
+import { UpdateStaffDto } from './dto/update-stuff.dto';
 
 @Controller('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
-  @Post()
-  create(@Body() createAuthStaffDto: CreateAuthStaffDto) {
-    return this.staffService.create(createAuthStaffDto);
+  @Post('create')
+  create(@Body() createStaffDto: CreateStaffDto) {
+    return this.staffService.create(createStaffDto);
   }
 
-  @Get()
+  @Get('get')
   findAll() {
     return this.staffService.findAll();
   }
 
-  @Get(':id')
+  @Get('get:id')
   findOne(@Param('id') id: string) {
     return this.staffService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch('update/:id')
   update(@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {
     return this.staffService.update(+id, updateStaffDto);
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.staffService.remove(+id);
   }
