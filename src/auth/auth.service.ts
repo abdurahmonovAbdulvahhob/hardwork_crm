@@ -6,9 +6,9 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtPayload, Tokens } from '../common/types';
-import { Stuff } from '@prisma/client';
+import { Staff } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { CreateStuffDto, SignInStuffDto } from './dto';
+import { CreateStaffDto, SignInStaffDto } from './dto';
 import { Response } from 'express';
 
 @Injectable()
@@ -18,10 +18,10 @@ export class AuthService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async generateTokens(stuff: Stuff): Promise<Tokens> {
+  async generateTokens(staff: Staff): Promise<Tokens> {
     const payload: JwtPayload = {
-      id: stuff.id,
-      login: stuff.login,
+      id: staff.id,
+      login: staff.login,
     };
 
     const [access_token, refresh_token] = await Promise.all([
@@ -37,11 +37,11 @@ export class AuthService {
     return { access_token, refresh_token };
   }
 
-  async updateRefreshToken(stuffId: number, refresh_token: string) {
+  async updateRefreshToken(staffId: number, refresh_token: string) {
     const hashedRefreshToken = await bcrypt.hash(refresh_token, 7);
-    await this.prismaService.stuff.update({
+    await this.prismaService.staff.update({
       where: {
-        id: stuffId,
+        id: staffId,
       },
       data: {
         hashedRefreshToken,
@@ -49,10 +49,10 @@ export class AuthService {
     });
   }
 
-  async signup(createStuffDto: CreateStuffDto, res: Response) {
-    const candidate = await this.prismaService.stuff.findUnique({
+  async signup(createStaffDto: CreateStaffDto, res: Response) {
+    const candidate = await this.prismaService.staff.findUnique({
       where: {
-        login: createStuffDto.login,
+        login: createStaffDto.login,
       },
     });
 
@@ -60,56 +60,56 @@ export class AuthService {
       throw new BadRequestException('Email already exists');
     }
 
-    if (createStuffDto.password !== createStuffDto.confirm_password) {
+    if (createStaffDto.password !== createStaffDto.confirm_password) {
       throw new BadRequestException('Password does not match');
     }
-    const hashedPassword = await bcrypt.hash(createStuffDto.password, 10);
+    const hashedPassword = await bcrypt.hash(createStaffDto.password, 10);
 
-    const newStuff = await this.prismaService.stuff.create({
+    const newStaff = await this.prismaService.staff.create({
       data: {
-        first_name: createStuffDto.first_name,
-        last_name: createStuffDto.last_name,
-        login: createStuffDto.login,
-        phone_number: createStuffDto.phone_number,
+        first_name: createStaffDto.first_name,
+        last_name: createStaffDto.last_name,
+        login: createStaffDto.login,
+        phone_number: createStaffDto.phone_number,
         hashedPassword,
       },
     });
 
-    const tokens = await this.generateTokens(newStuff);
-    await this.updateRefreshToken(newStuff.id, tokens.refresh_token);
+    const tokens = await this.generateTokens(newStaff);
+    await this.updateRefreshToken(newStaff.id, tokens.refresh_token);
     res.cookie('refresh_token', tokens.refresh_token, {
       maxAge: +process.env.COOKIE_TIME,
       httpOnly: true,
     });
 
-    return { id: newStuff.id, access_token: tokens.access_token };
+    return { id: newStaff.id, access_token: tokens.access_token };
   }
 
-  async signin(signInStuffDto: SignInStuffDto, res: Response) {
-    const stuff = await this.prismaService.stuff.findUnique({
+  async signin(signInStaffDto: SignInStaffDto, res: Response) {
+    const staff = await this.prismaService.staff.findUnique({
       where: {
-        login: signInStuffDto.login,
+        login: signInStaffDto.login,
       },
     });
 
-    if (!stuff) {
+    if (!staff) {
       throw new BadRequestException('Invalid email or password');
     }
     const valid_password = await bcrypt.compare(
-      signInStuffDto.password,
-      stuff.hashedPassword,
+      signInStaffDto.password,
+      staff.hashedPassword,
     );
     if (!valid_password) {
       throw new BadRequestException('Invalid email or password');
     }
-    const tokens = await this.generateTokens(stuff);
-    await this.updateRefreshToken(stuff.id, tokens.refresh_token);
+    const tokens = await this.generateTokens(staff);
+    await this.updateRefreshToken(staff.id, tokens.refresh_token);
     res.cookie('refresh_token', tokens.refresh_token, {
       maxAge: +process.env.COOKIE_TIME,
       httpOnly: true,
     });
     return {
-      id: stuff.id,
+      id: staff.id,
       access_token: tokens.access_token,
     };
   }
@@ -119,22 +119,22 @@ export class AuthService {
       secret: process.env.REFRESH_TOKEN_KEY,
     });
 
-    const stuff = await this.prismaService.stuff.findUnique({
+    const staff = await this.prismaService.staff.findUnique({
       where: { id: payload.id },
     });
-    if (!stuff) {
-      throw new BadRequestException('stuff not found');
+    if (!staff) {
+      throw new BadRequestException('staff not found');
     }
 
-    await this.prismaService.stuff.update({
-      where: { id: stuff.id, hashedRefreshToken: { not: null } },
+    await this.prismaService.staff.update({
+      where: { id: staff.id, hashedRefreshToken: { not: null } },
       data: { hashedRefreshToken: null },
     });
 
     res.clearCookie('refresh_token');
 
     return {
-      message: 'stuff successfully logged out',
+      message: 'staff successfully logged out',
     };
   }
 
@@ -147,24 +147,24 @@ export class AuthService {
         },
       );
 
-      const stuff = await this.prismaService.stuff.findUnique({
+      const staff = await this.prismaService.staff.findUnique({
         where: { id: payload.id },
       });
-      if (!stuff) {
-        throw new UnauthorizedException('stuff not found');
+      if (!staff) {
+        throw new UnauthorizedException('staff not found');
       }
 
       const valid_refresh_token = await bcrypt.compare(
         refresh_token,
-        stuff.hashedRefreshToken,
+        staff.hashedRefreshToken,
       );
       if (!valid_refresh_token) {
-        throw new UnauthorizedException('Unauthorized stuff');
+        throw new UnauthorizedException('Unauthorized staff');
       }
 
-      const tokens = await this.generateTokens(stuff);
+      const tokens = await this.generateTokens(staff);
 
-      await this.updateRefreshToken(stuff.id, tokens.refresh_token);
+      await this.updateRefreshToken(staff.id, tokens.refresh_token);
 
       res.cookie('refresh_token', tokens.refresh_token, {
         httpOnly: true,
@@ -173,7 +173,7 @@ export class AuthService {
 
       return {
         access_token: tokens.access_token,
-        id: stuff.id,
+        id: staff.id,
       };
     } catch (error) {
       console.log(error);

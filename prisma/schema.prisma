@@ -43,7 +43,7 @@ model Branch {
   @@map("branch")
 }
 
-model Stuff {
+model Staff {
   id                 Int     @id @default(autoincrement())
   first_name         String?
   last_name          String?
@@ -53,5 +53,5 @@ model Stuff {
   hashedRefreshToken String?
   is_active          String?
 
-  @@map("stuff")
+  @@map("staff")
 }

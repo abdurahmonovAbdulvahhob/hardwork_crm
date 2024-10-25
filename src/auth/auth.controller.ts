@@ -1,10 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AccessTokenGuard, RefreshTokenGuard } from '../common/guards';
 import { CookieGetter, Public } from '../common/decorators';
-import { CreateStuffDto, SignInStuffDto } from './dto';
+import { CreateStaffDto, SignInStaffDto } from './dto';
 import { Response } from 'express';
-
 
 @UseGuards(AccessTokenGuard)
 @Controller('auth')
@@ -14,19 +23,19 @@ export class AuthController {
   @Public()
   @Post('signup')
   async signup(
-    @Body() createStuffDto: CreateStuffDto,
+    @Body() createStaffDto: CreateStaffDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    return this.authService.signup(createStuffDto, res);
+    return this.authService.signup(createStaffDto, res);
   }
 
   @Public()
   @Post('signin')
   async signin(
-    @Body() signInStuffDto: SignInStuffDto,
+    @Body() signInStaffDto: SignInStaffDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    return this.authService.signin(signInStuffDto, res);
+    return this.authService.signin(signInStaffDto, res);
   }
 
   @Public()

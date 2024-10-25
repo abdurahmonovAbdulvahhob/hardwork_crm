@@ -1,3 +1,3 @@
-export * from "./create-stuff.dto";
-export * from "./update-stuff.dto";
-export * from "./signin-stuff.dto";
+export * from './create-staff.dto';
+export * from './update-staff.dto';
+export * from './signin-staff.dto';

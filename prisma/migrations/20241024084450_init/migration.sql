@@ -1,14 +1,14 @@
 /*
   Warnings:
 
-  - You are about to drop the `Stuff` table. If the table is not empty, all the data it contains will be lost.
+  - You are about to drop the `Staff` table. If the table is not empty, all the data it contains will be lost.
 
 */
 -- DropTable
-DROP TABLE "Stuff";
+DROP TABLE "Staff";
 
 -- CreateTable
-CREATE TABLE "stuff" (
+CREATE TABLE "staff" (
     "id" SERIAL NOT NULL,
     "first_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
@@ -17,5 +17,5 @@ CREATE TABLE "stuff" (
     "password" TEXT NOT NULL,
     "is_active" TEXT NOT NULL,
 
-    CONSTRAINT "stuff_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "staff_pkey" PRIMARY KEY ("id")
 );

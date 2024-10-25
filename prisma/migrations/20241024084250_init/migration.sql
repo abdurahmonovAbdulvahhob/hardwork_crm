@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "Stuff" (
+CREATE TABLE "Staff" (
     "id" SERIAL NOT NULL,
     "first_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
@@ -8,5 +8,5 @@ CREATE TABLE "Stuff" (
     "password" TEXT NOT NULL,
     "is_active" TEXT NOT NULL,
 
-    CONSTRAINT "Stuff_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Staff_pkey" PRIMARY KEY ("id")
 );

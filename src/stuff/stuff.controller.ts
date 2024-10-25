@@ -1,34 +1,42 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { StuffService } from './stuff.service';
-import { CreateStuffDto } from './dto/create-stuff.dto';
-import { UpdateStuffDto } from './dto/update-stuff.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { StaffService } from './staff.service';
+import { CreateStaffDto } from './dto/create-staff.dto';
+import { UpdateStaffDto } from './dto/update-staff.dto';
 
-@Controller('stuff')
-export class StuffController {
-  constructor(private readonly stuffService: StuffService) {}
+@Controller('staff')
+export class StaffController {
+  constructor(private readonly staffService: StaffService) {}
 
   @Post()
-  create(@Body() createStuffDto: CreateStuffDto) {
-    return this.stuffService.create(createStuffDto);
+  create(@Body() createStaffDto: CreateStaffDto) {
+    return this.staffService.create(createStaffDto);
   }
 
   @Get()
   findAll() {
-    return this.stuffService.findAll();
+    return this.staffService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.stuffService.findOne(+id);
+    return this.staffService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStuffDto: UpdateStuffDto) {
-    return this.stuffService.update(+id, updateStuffDto);
+  update(@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {
+    return this.staffService.update(+id, updateStaffDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.stuffService.remove(+id);
+    return this.staffService.remove(+id);
   }
 }

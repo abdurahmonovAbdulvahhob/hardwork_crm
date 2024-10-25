@@ -6,7 +6,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class CreateStuffDto {
+export class CreateStaffDto {
   @IsOptional()
   @IsString()
   readonly first_name?: string;
